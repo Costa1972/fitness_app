@@ -10,6 +10,10 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import ru.costa.backend.errors.ApplicationError;
+import ru.costa.backend.jwt.AccessTokenRequest;
+import ru.costa.backend.jwt.JwtAuthenticationProvider;
+import ru.costa.backend.jwt.TokenResponse;
 
 import java.util.HashMap;
 import java.util.Map;
