@@ -55,6 +55,23 @@ public class User {
     @JoinColumn(name = "address_id")
     private Address address;
 
+    public User(String username,
+                String password,
+                String firstName,
+                String lastName,
+                String email,
+                String phoneNumber,
+                int age,
+                Sex sex) {
+        this.username = username;
+        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.age = age;
+    }
+
     @RequiredArgsConstructor
     @Getter
     public enum Sex {

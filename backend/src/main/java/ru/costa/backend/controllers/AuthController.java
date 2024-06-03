@@ -17,8 +17,8 @@ import ru.costa.backend.services.AuthenticationService;
 public class AuthController {
     private final AuthenticationService authenticationService;
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody AccessTokenRequest request) {
-        return ResponseEntity.ok(authenticationService.generateAccessToken(request));
+    @PostMapping("/signin")
+    public ResponseEntity<?> signIn(@RequestBody AccessTokenRequest request) {
+        return ResponseEntity.ok(authenticationService.authenticateUser(request));
     }
 }
