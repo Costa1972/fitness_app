@@ -2,11 +2,8 @@ package ru.costa.backend.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import ru.costa.backend.jwt.AccessTokenRequest;
+import org.springframework.web.bind.annotation.*;
+import ru.costa.backend.jwt.payload.request.AccessTokenRequest;
 import ru.costa.backend.services.AuthenticationService;
 
 /**
@@ -16,6 +13,7 @@ import ru.costa.backend.services.AuthenticationService;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class AuthController {
     private final AuthenticationService authenticationService;
 

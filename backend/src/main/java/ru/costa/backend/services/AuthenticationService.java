@@ -2,21 +2,22 @@ package ru.costa.backend.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import ru.costa.backend.errors.ApplicationError;
-import ru.costa.backend.jwt.AccessTokenRequest;
+import ru.costa.backend.jwt.payload.request.AccessTokenRequest;
 import ru.costa.backend.jwt.JwtAuthenticationProvider;
-import ru.costa.backend.jwt.TokenResponse;
+import ru.costa.backend.jwt.payload.response.TokenResponse;
+import ru.costa.backend.jwt.entities.RefreshToken;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,18 +27,20 @@ public class AuthenticationService {
     private final UserService userService;
     private final JwtAuthenticationProvider jwtAuthenticationProvider;
     private final AuthenticationManager authenticationManager;
+    private final RefreshTokenService refreshTokenService;
 
     public ResponseEntity<?> generateAccessToken(@NonNull AccessTokenRequest tokenRequest) {
-        Map<String, String> refreshStorage = new HashMap<>();
-        try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(tokenRequest.getUsername(), tokenRequest.getPassword()));
-        } catch (BadCredentialsException badCredentialsException) {
-            return new ResponseEntity<>(new ApplicationError(HttpStatus.UNAUTHORIZED.value(), WRONG_USERNAME_OR_PASSWORD), HttpStatus.UNAUTHORIZED);
-        }
-        UserDetails userDetails = userService.loadUserByUsername(tokenRequest.getUsername());
+        Authentication authentication = authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(tokenRequest.getUsername(), tokenRequest.getPassword()));
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        Set<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toSet());
         String accessToken = jwtAuthenticationProvider.generateAccessToken(userDetails);
-        String refreshToken = jwtAuthenticationProvider.generateRefreshToken(userDetails);
-        refreshStorage.put("token", refreshToken);
-        return ResponseEntity.ok(new TokenResponse(accessToken, refreshToken));
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(tokenRequest.getUsername());
+
+        return ResponseEntity
+                .ok(new TokenResponse(accessToken, refreshToken.getToken(), userDetails.getUsername(), roles));
     }
 }

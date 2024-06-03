@@ -11,6 +11,7 @@ import ru.costa.backend.entities.User;
 import ru.costa.backend.repositories.UserRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -37,5 +38,13 @@ public class UserService implements UserDetailsService {
                 user.getRoles().stream().map(role ->
                         new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList())
         );
+    }
+
+    public Optional<User> getUserByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    public Optional<User> getUserById(Long userId) {
+        return userRepository.findById(userId);
     }
 }

@@ -79,7 +79,7 @@ public class JwtAuthenticationProvider {
                 .compact();
     }
 
-    private Claims getAllClaimsFromToken(String token) {
+    public Claims getAllClaimsFromToken(String token) {
         return Jwts.parser()
                 .verifyWith(getSigningKey())
                 .build()

@@ -1,4 +1,4 @@
-package ru.costa.backend.jwt;
+package ru.costa.backend.jwt.payload.request;
 
 import lombok.Data;
 
