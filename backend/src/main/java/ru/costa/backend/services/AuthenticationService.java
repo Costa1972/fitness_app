@@ -49,7 +49,7 @@ public class AuthenticationService {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         Set<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toSet());
-        String accessToken = jwtAuthenticationProvider.generateAccessToken(userDetails);
+        String accessToken = jwtAuthenticationProvider.generateAccessToken(authentication);
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(tokenRequest.getUsername());
 
         return ResponseEntity
